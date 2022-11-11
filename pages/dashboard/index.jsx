@@ -12,12 +12,7 @@ export default function index() {
   const [timer, setTimer] = useState(0);
 
   const router = useRouter();
-  const { isReady } = router;
   const { page: qPage, limit: qLimit } = router.query;
-
-  function refreshTimer() {
-    setTimer(timer + 1);
-  }
 
   async function getData(qPage, qLimit) {
     try {
@@ -45,33 +40,38 @@ export default function index() {
     }
   }
 
-  useEffect(() => {
-    console.log({ router });
-    setIsLoading(true);
+  /* === TIMER === */
+  // useEffect(() => {
+  //   console.log({ router });
+  //   setIsLoading(true);
 
-    let runTimer;
+  //   let runTimer;
 
-    if (isReady && qPage && qLimit) {
-      setPage(qPage);
-      setLimit(qLimit);
+  //   if (qPage && qLimit) {
+  //     setPage(qPage);
+  //     setLimit(qLimit);
 
-      getData(qPage, qLimit);
-    }
+  //     getData(qPage, qLimit);
+  //   }
 
-    if (isReady && !qPage && !qLimit) {
-      runTimer = timer < 3 ? setInterval(refreshTimer, 1000) : "";
-    }
-    if (isReady && !qPage && !qLimit && timer >= 3) {
-      getData(1, 10);
-    }
+  //   if (!qPage && !qLimit) {
+  //     runTimer = timer < 3 ? setInterval(refreshTimer, 1000) : "";
+  //   }
+  //   if (!qPage && !qLimit && timer >= 3) {
+  //     getData(1, 10);
+  //   }
 
-    // console.log({ timer });
-    // console.log({ qPage, qLimit });
+  //   // console.log({ timer });
+  //   // console.log({ qPage, qLimit });
 
-    return () => {
-      clearInterval(runTimer);
-    };
-  }, [qPage, qLimit, timer]);
+  //   return () => {
+  //     clearInterval(runTimer);
+  //   };
+  // }, [qPage, qLimit, timer]);
+
+  function refreshTimer() {
+    setTimer(timer + 1);
+  }
 
   function getDotFormTimer() {
     let dot = "";
@@ -83,9 +83,24 @@ export default function index() {
     return dot;
   }
 
+  const { isReady: routerReady } = router;
+
+  /* === useRouter.isReady === */
   useEffect(() => {
-    console.log("router", router);
-  }, []);
+    setIsLoading(true);
+
+    if (!routerReady) {
+      return;
+    }
+    if ((qPage, qLimit)) {
+      setPage(qPage);
+      setLimit(qLimit);
+    }
+
+    getData(qPage, qLimit);
+
+    return () => {};
+  }, [router]);
 
   return (
     <>
